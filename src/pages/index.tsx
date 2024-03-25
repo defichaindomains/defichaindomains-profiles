@@ -1,6 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import validateDomain from "@/lib/validateDomain";
 import Link from "next/link";
 import AppContainer from "@/components/AppContainer";
 import { Separator } from "@radix-ui/react-context-menu";
@@ -14,6 +12,27 @@ import { Search } from "lucide-react";
  */
 export default function Home() {
   const [domain, setDomain] = useState<string>("");
+  const [validDomain, setValidDomain] = useState<boolean>(true);
+
+  const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValidDomain(true);
+    const input = e.target.value;
+    setDomain(input); // Validate the address and set the error state
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setValidDomain(validateDomain(domain));
+    if (e.key === "Enter" && validateDomain(domain) === true) {
+      window.location.href = `/${domain}`;
+    }
+  };
+  const handleButtonPress = () => {
+    setValidDomain(validateDomain(domain));
+
+    if (validateDomain(domain) === true) {
+      window.location.href = `/${domain}`;
+    }
+  };
 
   return (
     <AppContainer>
@@ -28,23 +47,31 @@ export default function Home() {
           <p className="text-center lg:text-start lg:mb-4">
             One page to show who you are and everything you make and own.
           </p>
-
           <div className="w-full flex flex-row mt-8 justify-center items-center">
             <Input
               type="text"
               placeholder="Enter a Defichain Domains handle, e.g. stefano.dfi"
-              className={`w-full`}
+              className={`w-full ${
+                validDomain === false ? "border-red-500" : ""
+              }`} // Add border color if there's an error
               value={domain}
-              onChange={(e) => {
-                setDomain(e.target.value);
-              }}
+              onChange={handleDomainChange}
+              onKeyDown={handleKeyPress}
             />
-            <Link href={`/${domain}`}>
-              <div className="bg-gray-200 rounded-lg flex items-center justify-center h-10 w-10 ml-2 ">
-                <Search className="p-1" />
-              </div>
-            </Link>
+
+            <div
+              className={`bg-gray-200 rounded-lg flex items-center justify-center h-10 w-10 ml-2 ${
+                validDomain === true ? "" : "cursor-not-allowed"
+              }`}
+              onClick={handleButtonPress}
+            >
+              <Search className="p-1" />
+            </div>
           </div>
+          {validDomain == false && (
+            <p className="text-red-500">{"Invalid Defichain Domain"}</p>
+          )}{" "}
+          {/* Display error message */}
         </div>
       </div>
     </AppContainer>

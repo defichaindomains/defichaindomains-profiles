@@ -5,8 +5,8 @@ import { resolverAbi, resolverAddress } from "@/const/config";
 
 const useDomain = (domainName: string) => {
   const sdk = useSDK();
-  const [resolvedAddress, setResolvedAddress] = useState<string | null>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [records, setRecords] = useState<any>({});
 
   useEffect(() => {
