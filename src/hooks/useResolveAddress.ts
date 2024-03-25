@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { BigNumber } from "ethers";
 import { useSDK } from "@thirdweb-dev/react";
 import {
   resolverAbi,

@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import { BigNumber } from "ethers";
+import { BigNumber, utils } from "ethers";
+import { useSDK } from "@thirdweb-dev/react";
+import { resolverAbi, resolverAddress } from "@/const/config";
 
 const useDomain = (domainName: string) => {
+  const sdk = useSDK();
   const [resolvedAddress, setResolvedAddress] = useState<string | null>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [hasAvatar, setHasAvatar] = useState<boolean>(false);
+  const [records, setRecords] = useState<any>({});
 
   useEffect(() => {
     setLoading(true);
     const fetchDomain = async () => {
+      let records: any;
       try {
+        const publicResolver = await sdk?.getContractFromAbi(
+          resolverAddress,
+          resolverAbi
+        );
+
+        const labelHash = utils.namehash(domainName);
+        console.log(labelHash);
         const graphqlQuery = {
           query: `
             query GetDomainByName($name: String!) {
@@ -44,13 +55,16 @@ const useDomain = (domainName: string) => {
           const domainData = data.domains[0];
           const address = domainData.resolver.addr.id;
           setResolvedAddress(address);
-          const hasAvatarText =
-            domainData.resolver.texts &&
-            domainData.resolver.texts.includes("avatar");
-          setHasAvatar(hasAvatarText);
+
+          const keys = domainData.resolver.texts;
+
+          for (const key of keys) {
+            const record = await publicResolver?.call("text", [labelHash, key]);
+            records = { ...records, [key]: record };
+          }
+          setRecords(records);
         } else {
           setResolvedAddress(null);
-          setHasAvatar(false);
         }
       } catch (error) {
         console.error("Error fetching domains:", error);
@@ -60,8 +74,8 @@ const useDomain = (domainName: string) => {
     };
 
     fetchDomain();
-  }, [domainName]);
-  return { resolvedAddress, loading, hasAvatar };
+  }, [domainName, sdk]);
+  return { resolvedAddress, loading, records };
 };
 
 export default useDomain;

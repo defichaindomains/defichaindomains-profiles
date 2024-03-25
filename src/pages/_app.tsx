@@ -9,6 +9,7 @@ import { CHAIN, byoWalletOptions, createWalletOptions } from "@/const/config";
 import { useEffect, useState } from "react";
 import { WalletOptionsProvider } from "@/context/WalletOptionsContext";
 import NetworkSwitchDialog from "@/components/NetworkSwitchDialog";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,6 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
             {/* This is used to overlay the Network dialog when the user is on the wrong chain.
                 We need information from a thirdweb react hook to do that, so we create a separate component. */}
             <AppWrapper Component={Component} pageProps={pageProps} />
+            <Toaster />
           </ThirdwebProvider>
         </WalletOptionsProvider>
         {/* </LensProvider> */}
