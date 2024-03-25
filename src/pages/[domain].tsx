@@ -18,7 +18,6 @@ import {
   reverseRegistrarAddress,
 } from "@/const/config";
 import { useQRCode } from "next-qrcode";
-import WalletConnectSection from "@/components/WalletConnectSection";
 import formatNumber from "@/lib/numberFormatter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";

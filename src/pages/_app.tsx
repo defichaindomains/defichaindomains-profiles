@@ -8,7 +8,6 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { CHAIN, byoWalletOptions, createWalletOptions } from "@/const/config";
 import { useEffect, useState } from "react";
 import { WalletOptionsProvider } from "@/context/WalletOptionsContext";
-import NetworkSwitchDialog from "@/components/NetworkSwitchDialog";
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -49,42 +48,12 @@ export default function App({ Component, pageProps }: AppProps) {
             <NextNProgress />
             {/* This is used to overlay the Network dialog when the user is on the wrong chain.
                 We need information from a thirdweb react hook to do that, so we create a separate component. */}
-            <AppWrapper Component={Component} pageProps={pageProps} />
+            <Component {...pageProps} />
             <Toaster />
           </ThirdwebProvider>
         </WalletOptionsProvider>
         {/* </LensProvider> */}
       </QueryClientProvider>
     </main>
-  );
-}
-
-function AppWrapper({
-  Component,
-  pageProps,
-}: {
-  Component: AppProps["Component"];
-  pageProps: AppProps["pageProps"];
-}) {
-  // This says: is the current network different from the one defined in the thirdweb provider's activeChain prop?
-  const isMismatched = useNetworkMismatch();
-
-  // Do we want to show the dialog? We only want to show it if the user is on the wrong network.
-  const [showDialog, setShowDialog] = useState<boolean>(true);
-
-  useEffect(() => {
-    // If the user is on the wrong network, show the dialog.
-    if (isMismatched) {
-      setShowDialog(true);
-    }
-    // Run this effect whenever the isMismatched variable changes. i.e. whenever the user switches networks.
-  }, [isMismatched]);
-
-  return (
-    <>
-      {/* Simply overlay the dialog over the rest of the app */}
-      {showDialog && <NetworkSwitchDialog isOpen={isMismatched} />}
-      <Component {...pageProps} />
-    </>
   );
 }
