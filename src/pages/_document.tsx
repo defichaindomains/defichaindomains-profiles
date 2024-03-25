@@ -8,28 +8,32 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <title>Defichain Domains Pay</title>
+      <title>Defichain Domains Profile</title>
       <link rel="icon" href="/favicon.ico" />
       <meta name="viewport" content="width=device-width, user-scalable=no" />
       <meta name="theme-color" content="#ffffff" />
       <meta
         name="description"
-        content="Defichain Domains Pay - Send cryptocurrency to one another with ease."
+        content="Defichain Domains Profile - One page to show who you are and everything you make and own.
+
+."
       />
       <meta
         name="keywords"
-        content="Defichain Domains Pay, cryptocurrency, send cryptocurrency, digital payments"
+        content="Defichain Domains Profiles, web3, domains, profiles.
+
+        "
       />
       <meta name="author" content="Defichain Domains" />
       <meta name="og:title" content="Defichain Domains Pay" />
       <meta
         name="og:description"
-        content="A secure and user-friendly app for sending cryptocurrency."
+        content="One page to show who you are and everything you make and own."
       />
       <meta name="og:type" content="website" />
       <meta
         name="og:url"
-        content="https://www.pay.defichain-domains.com"
+        content="https://www.profile.defichain-domains.com"
       ></meta>
       <body>
         <Main />
