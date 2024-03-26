@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
+import { useSDK } from "@thirdweb-dev/react";
+import { resolverAbi, resolverAddress } from "@/const/config";
 
-const useDomain = (domainName: string) => {
-  const [resolvedAddress, setResolvedAddress] = useState<string | null>("");
+const useRecords = (domainName: string) => {
+  const sdk = useSDK();
   const [loading, setLoading] = useState<boolean>(true);
+  const [records, setRecords] = useState<any>({});
 
   useEffect(() => {
     setLoading(true);
-    const fetchDomain = async () => {
+    const fetchRecord = async () => {
+      let records: any;
       try {
+        const publicResolver = await sdk?.getContractFromAbi(
+          resolverAddress,
+          resolverAbi
+        );
+
         const labelHash = utils.namehash(domainName);
         console.log(labelHash);
         const graphqlQuery = {
@@ -41,25 +50,30 @@ const useDomain = (domainName: string) => {
         );
         const { data } = await graphqlResponse.json();
 
-        if (data.domains[0]) {
+        if (data.domains[0].resolver.texts) {
           const domainData = data.domains[0];
-          const address = domainData.resolver.addr.id;
-          setResolvedAddress(address);
-        } else {
-          setResolvedAddress(null);
+
+          const keys = domainData.resolver.texts;
+
+          for (const key of keys) {
+            const record = await publicResolver?.call("text", [labelHash, key]);
+            records = { ...records, [key]: record };
+          }
+
+          setRecords(records);
         }
       } catch (error) {
+        setRecords({});
         console.error("Error fetching domains:", error);
       } finally {
         setLoading(false);
       }
     };
-
     if (domainName) {
-      fetchDomain();
+      fetchRecord();
     }
-  }, [domainName]);
-  return { resolvedAddress, loading };
+  }, [domainName, sdk]);
+  return { loading, records };
 };
 
-export default useDomain;
+export default useRecords;
